@@ -3,6 +3,7 @@ import numpy as np
 import HandtrackingVirtualMouse as htm
 import time
 import autopy
+import mouse
 
 wCam, hCam = 640, 480
 Reduce_Frame = 110
@@ -50,11 +51,26 @@ while True:
             
         if fingers[1] == 1 and fingers[2] == 1:
             length, image, extraPts = detector.findDistance(8, 12, image)
-            print(length)
+           # print(length)
             if length < 40:
                 cv2.circle(image, (extraPts[4], extraPts[5]),15, (0, 255, 0), cv2.FILLED)
                 autopy.mouse.click()
-        
+          
+        if fingers == [1, 1, 0, 0, 0]:
+            length, image, extraPts = detector.findDistance(4, 8, image)
+            print(length)
+            if length < 15:
+                cv2.circle(image, (extraPts[4], extraPts[5]),15, (0, 255, 0), cv2.FILLED)
+                mouse.click('right')
+
+        if fingers == [0, 1, 1, 1, 0]:  # If three fingers are detected
+            # Scroll up
+            mouse.wheel(5)
+        elif fingers == [0, 0, 0, 0, 0]:  # If no fingers are detected
+            # Scroll down
+            mouse.wheel(-5)
+
+           
    
     cTime = time.time()
     fps = 1 / (cTime - pTime)
