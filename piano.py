@@ -35,7 +35,7 @@ effect17=pygame.mixer.Sound('./piano_sound/key17.mp3')
 detector = htm.HandDetector(maxHands=2,detectionConf=0.8)
 width=65
 start=[5,70,145,220,295,370,445,520,595,670,745,820,895,970,1045,1120,1195]  #17
-end=[60,125,210,285,360,435,510,585,660,735,810,885,960,1035,1110,1185,1260]
+end=[60,135,210,285,360,435,510,585,660,735,810,885,960,1035,1110,1185,1260]
 
 
 while True:
@@ -46,9 +46,12 @@ while True:
 
     img=detector.find_Hands(frame)
     fList = detector.find_Position(img)
+    
+    
 
     for i in range(len(start)):
-        cv2.rectangle(frame, (start[i],0), (end[i],250), (255,255,255),1)
+        cv2.rectangle(frame, (start[i],0), (end[i],250), (255, 255, 255),cv2.FILLED)
+        cv2.rectangle(frame, (start[i],0), (end[i],250), (0,0,0),5)
 
     if fList:
         for i in range(len(start)):
@@ -57,7 +60,7 @@ while True:
 
             print(fList[8][1])
 
-            if x1<=fList[8][1]<=x2:
+            if x1<=fList[8][1]<=x2 and 0<=fList[8][2]<=260:
                 cv2.rectangle(frame, (x1,0), (x2,250), (255,0,255),1)
 
                 length, image, extraPts = detector.findDistance(8, 12, frame)
@@ -120,5 +123,3 @@ while True:
     
     if cv2.waitKey(25) == ord('q'):
         break
-
-

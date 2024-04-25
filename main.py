@@ -3,6 +3,7 @@ import numpy as np
 import HandtrackingVirtualMouse as htm
 import time
 import autopy
+import mouse
 
 wCam, hCam = 640, 480
 Reduce_Frame = 110
@@ -33,28 +34,47 @@ while True:
         print(fingers)
         cv2.rectangle(image, (Reduce_Frame, Reduce_Frame), (wCam - Reduce_Frame, hCam - Reduce_Frame),(255, 0, 255), 2)
         
-        if fingers[1] == 1 and fingers[2] == 0:
-            x3 = np.interp(x1, (Reduce_Frame+50, wCam - Reduce_Frame-50), (0, wScreen))
-            y3 = np.interp(y1, (Reduce_Frame+50, hCam - Reduce_Frame-50), (0, hScreen))
+        if fingers == [0, 1, 0, 0, 0]:
+           
+                x3 = np.interp(x1, (Reduce_Frame+50, wCam - Reduce_Frame-50), (0, wScreen))
+                y3 = np.interp(y1, (Reduce_Frame+50, hCam - Reduce_Frame-50), (0, hScreen))
 
-            curr_x = prev_x+(x3-prev_x)/smoothen
-            curr_y = prev_y+(y3-prev_y)/smoothen
+                curr_x = prev_x+(x3-prev_x)/smoothen
+                curr_y = prev_y+(y3-prev_y)/smoothen
 
-            try:
-                autopy.mouse.move(wScreen - curr_x, curr_y)
-            except:
-                print("finger out of range")
-            cv2.circle(image, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
-            prev_x,prev_y=curr_x,curr_y
+                try:
+                    autopy.mouse.move(wScreen - curr_x, curr_y)
+                except:
+                    print("finger out of range")
+                cv2.circle(image, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
+                prev_x,prev_y=curr_x,curr_y
         
             
         if fingers[1] == 1 and fingers[2] == 1:
             length, image, extraPts = detector.findDistance(8, 12, image)
-            print(length)
+           # print(length)
             if length < 40:
                 cv2.circle(image, (extraPts[4], extraPts[5]),15, (0, 255, 0), cv2.FILLED)
                 autopy.mouse.click()
-        
+          
+       # if fingers == [1, 1, 0, 0, 0]:
+        #    length, image, extraPts = detector.findDistance(4, 8, image)
+         #   print(length)
+          #  if length < 15:
+           #     cv2.circle(image, (extraPts[4], extraPts[5]),15, (0, 255, 0), cv2.FILLED)
+            #    mouse.click('right')
+        if fingers == [0, 0, 1, 0, 0]:
+            mouse.click('right')
+            time.sleep(0.5)
+
+        if fingers == [0, 1, 1, 1, 0]:  # If three fingers are detected
+            # Scroll up
+            mouse.wheel(5)
+        elif fingers == [0, 0, 0, 0, 0]:  # If no fingers are detected
+            # Scroll down
+            mouse.wheel(-5)
+
+           
    
     cTime = time.time()
     fps = 1 / (cTime - pTime)
@@ -64,3 +84,7 @@ while True:
     cv2.imshow("Image", image)
     if cv2.waitKey(25) == ord('q'):
         break
+
+
+
+
